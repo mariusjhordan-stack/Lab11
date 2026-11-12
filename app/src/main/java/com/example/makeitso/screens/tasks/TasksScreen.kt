@@ -24,7 +24,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,8 +49,11 @@ fun TasksScreen(
     .tasks
     .collectAsStateWithLifecycle(emptyList())
 
+  val options by viewModel.options
+
   TasksScreenContent(
     tasks = tasks.value,
+    options = options,
     onAddClick = viewModel::onAddClick,
     onSettingsClick = viewModel::onSettingsClick,
     onTaskCheckChange = viewModel::onTaskCheckChange,
@@ -65,6 +70,7 @@ fun TasksScreen(
 fun TasksScreenContent(
   modifier: Modifier = Modifier,
   tasks: List<Task>,
+  options: List<String>,
   onAddClick: ((String) -> Unit) -> Unit,
   onSettingsClick: ((String) -> Unit) -> Unit,
   onTaskCheckChange: (Task) -> Unit,
@@ -77,13 +83,14 @@ fun TasksScreenContent(
         onClick = { onAddClick(openScreen) },
         backgroundColor = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.onPrimary,
+        elevation = FloatingActionButtonDefaults.elevation(8.dp),
         modifier = modifier.padding(16.dp)
       ) {
-        Icon(Icons.Filled.Add, "Add")
+        Icon(Icons.Filled.Add, contentDescription = "Add Task")
       }
     }
-  ) {
-    Column(modifier = Modifier.fillMaxWidth().fillMaxHeight()) {
+  ) { innerPadding ->
+    Column(modifier = Modifier.fillMaxWidth().fillMaxHeight().padding(innerPadding)) {
       ActionToolbar(
         title = AppText.tasks,
         modifier = Modifier.toolbarActions(),
@@ -93,14 +100,45 @@ fun TasksScreenContent(
 
       Spacer(modifier = Modifier.smallSpacer())
 
-      LazyColumn {
-        items(tasks, key = { it.id }) { taskItem ->
-          TaskItem(
-            task = taskItem,
-            options = listOf(),
-            onCheckChange = { onTaskCheckChange(taskItem) },
-            onActionClick = { action -> onTaskActionClick(openScreen, taskItem, action) }
-          )
+      if (tasks.isEmpty()) {
+        Box(
+          modifier = Modifier.fillMaxSize().padding(16.dp),
+          contentAlignment = Alignment.Center
+        ) {
+          Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+              painter = painterResource(AppIcon.ic_calendar),
+              contentDescription = "Empty state",
+              tint = MaterialTheme.colors.primary.copy(alpha = 0.5f),
+              modifier = Modifier.size(64.dp)
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+              text = "No tasks yet",
+              style = MaterialTheme.typography.h6,
+              color = MaterialTheme.colors.onSurface.copy(alpha = 0.7f)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+              text = "Tap the + button below to create your first task",
+              style = MaterialTheme.typography.body2,
+              color = MaterialTheme.colors.onSurface.copy(alpha = 0.5f)
+            )
+          }
+        }
+      } else {
+        LazyColumn(
+          modifier = Modifier.fillMaxSize(),
+          contentPadding = PaddingValues(vertical = 8.dp)
+        ) {
+          items(tasks, key = { it.id }) { taskItem ->
+            TaskItem(
+              task = taskItem,
+              options = options,
+              onCheckChange = { onTaskCheckChange(taskItem) },
+              onActionClick = { action -> onTaskActionClick(openScreen, taskItem, action) }
+            )
+          }
         }
       }
     }
@@ -114,6 +152,7 @@ fun TasksScreenPreview() {
   MakeItSoTheme {
     TasksScreenContent(
       tasks = emptyList(),
+      options = listOf("Edit task", "Toggle flag", "Delete task"),
       onAddClick = { },
       onSettingsClick = { },
       onTaskCheckChange = { },

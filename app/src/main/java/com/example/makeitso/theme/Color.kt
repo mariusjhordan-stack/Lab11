@@ -18,6 +18,10 @@ package com.example.makeitso.theme
 
 import androidx.compose.ui.graphics.Color
 
-val BrightOrange = Color(0xFFFF8A65)
-val MediumOrange = Color(0xFFFFA000)
-val DarkOrange = Color(0xFFF57C00)
+val PrimaryLight = Color(0xFF3F51B5) // Deep Indigo
+val PrimaryVariantLight = Color(0xFF303F9F)
+val SecondaryLight = Color(0xFF00ACC1) // Cyan
+
+val PrimaryDark = Color(0xFF7986CB)
+val PrimaryVariantDark = Color(0xFF3F51B5)
+val SecondaryDark = Color(0xFF26A69A) // Emerald / Teal

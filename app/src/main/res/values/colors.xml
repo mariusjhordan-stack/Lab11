@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="medium_orange">#FFFFA000</color>
-    <color name="light_orange">#FFFFCA28</color>
-    <color name="dark_orange">#FFF57C00</color>
-    <color name="bright_orange">#FFFF8A65</color>
+    <color name="primary_indigo">#FF3F51B5</color>
+    <color name="primary_variant_indigo">#FF303F9F</color>
+    <color name="secondary_cyan">#FF00ACC1</color>
+    <color name="primary_dark_indigo">#FF7986CB</color>
+    <color name="secondary_dark_teal">#FF26A69A</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>

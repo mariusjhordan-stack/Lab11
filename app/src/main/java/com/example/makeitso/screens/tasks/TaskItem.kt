@@ -17,12 +17,15 @@ limitations under the License.
 package com.example.makeitso.screens.tasks
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.makeitso.R.drawable as AppIcon
@@ -30,8 +33,8 @@ import com.example.makeitso.common.composable.DropdownContextMenu
 import com.example.makeitso.common.ext.contextMenu
 import com.example.makeitso.common.ext.hasDueDate
 import com.example.makeitso.common.ext.hasDueTime
+import com.example.makeitso.model.Priority
 import com.example.makeitso.model.Task
-import com.example.makeitso.theme.DarkOrange
 import java.lang.StringBuilder
 
 @Composable
@@ -43,21 +46,36 @@ fun TaskItem(
   onActionClick: (String) -> Unit
 ) {
   Card(
-    backgroundColor = MaterialTheme.colors.background,
-    modifier = Modifier.padding(8.dp, 0.dp, 8.dp, 8.dp),
+    backgroundColor = MaterialTheme.colors.surface,
+    elevation = 3.dp,
+    shape = RoundedCornerShape(12.dp),
+    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
   ) {
     Row(
       verticalAlignment = Alignment.CenterVertically,
-      modifier = Modifier.fillMaxWidth(),
+      modifier = Modifier.fillMaxWidth().padding(12.dp),
     ) {
       Checkbox(
         checked = task.completed,
-        onCheckedChange = { onCheckChange() },
-        modifier = Modifier.padding(8.dp, 0.dp)
+        onCheckedChange = { onCheckChange() }
       )
 
+      Spacer(modifier = Modifier.width(8.dp))
+
       Column(modifier = Modifier.weight(1f)) {
-        Text(text = task.title, style = MaterialTheme.typography.subtitle2)
+        Text(
+          text = task.title,
+          style = MaterialTheme.typography.subtitle1.copy(
+            textDecoration = if (task.completed) TextDecoration.LineThrough else TextDecoration.None,
+            color = if (task.completed) MaterialTheme.colors.onSurface.copy(alpha = 0.6f) else MaterialTheme.colors.onSurface
+          )
+        )
+        val priorityEnum = Priority.getByName(task.priority)
+        if (priorityEnum != Priority.None) {
+          Spacer(modifier = Modifier.height(2.dp))
+          PriorityBadge(priority = priorityEnum)
+        }
+        Spacer(modifier = Modifier.height(4.dp))
         CompositionLocalProvider(LocalContentAlpha provides ContentAlpha.medium) {
           Text(text = getDueDateAndTime(task), fontSize = 12.sp)
         }
@@ -66,13 +84,38 @@ fun TaskItem(
       if (task.flag) {
         Icon(
           painter = painterResource(AppIcon.ic_flag),
-          tint = DarkOrange,
-          contentDescription = "Flag"
+          tint = MaterialTheme.colors.secondary,
+          contentDescription = "Flag",
+          modifier = Modifier.size(20.dp)
         )
+        Spacer(modifier = Modifier.width(4.dp))
       }
 
       DropdownContextMenu(options, Modifier.contextMenu(), onActionClick)
     }
+  }
+}
+
+@Composable
+private fun PriorityBadge(priority: Priority) {
+  val (color, text) = when (priority) {
+    Priority.High -> Color(0xFFE53935) to "High"
+    Priority.Medium -> Color(0xFFFB8C00) to "Medium"
+    Priority.Low -> Color(0xFF43A047) to "Low"
+    else -> Color.Transparent to ""
+  }
+
+  Surface(
+    color = color.copy(alpha = 0.15f),
+    shape = RoundedCornerShape(4.dp),
+    modifier = Modifier.padding(top = 2.dp)
+  ) {
+    Text(
+      text = text,
+      color = color,
+      style = MaterialTheme.typography.caption.copy(fontSize = 10.sp),
+      modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+    )
   }
 }
 

@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.example.makeitso.common.ext.alertDialog
 import com.example.makeitso.common.ext.textButton
-import com.example.makeitso.theme.BrightOrange
+import com.example.makeitso.theme.PrimaryLight
 import com.example.makeitso.R.string as AppText
 
 @Composable
@@ -34,7 +34,7 @@ fun PermissionDialog(onRequestPermission: () -> Unit) {
                     },
                     modifier = Modifier.textButton(),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = BrightOrange,
+                        backgroundColor = PrimaryLight,
                         contentColor = Color.White
                     )
                 ) { Text(text = stringResource(AppText.request_notification_permission)) }
@@ -58,7 +58,7 @@ fun RationaleDialog() {
                     onClick = { showWarningDialog = false },
                     modifier = Modifier.textButton(),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = BrightOrange,
+                        backgroundColor = PrimaryLight,
                         contentColor = Color.White
                     )
                 ) { Text(text = stringResource(AppText.ok)) }
